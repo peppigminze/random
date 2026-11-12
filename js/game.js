@@ -639,7 +639,7 @@
     G.cam.x = L.damp(G.cam.x, tx, 5.5, rdt); G.cam.y = L.damp(G.cam.y, ty, 5.5, rdt);
     const tz = (G.boss || G.echo ? 0.9 : 1) * (G.slow < 0.9 ? 1.06 : 1) * (G.attract ? 0.92 : 1);
     G.cam.zoom = L.damp(G.cam.zoom, tz, 3, rdt);
-    L.post.ca = L.damp(L.post.ca, F.trauma * 0.022 + (1 - Math.min(1, G.slow)) * 0.006, 12, rdt);
+    L.post.ca = L.damp(L.post.ca, F.trauma * 0.015 + (1 - Math.min(1, G.slow)) * 0.006, 12, rdt);
     L.post.flash = L.damp(L.post.flash, 0, 7, rdt);
     F.update(rdt, dt);
     // adaptive music: intensity follows what is on screen
