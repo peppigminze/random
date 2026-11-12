@@ -33,6 +33,18 @@
     } else if (e) { fx += -p.x / d0 * Math.min(1, d0 / 120) * 1.2; fy += -p.y / d0 * Math.min(1, d0 / 120) * 1.2; }
     else if (d0 > G.arenaR * 0.7) { const k = (d0 - G.arenaR * 0.7) / (G.arenaR * 0.3); fx -= p.x / d0 * k * 3; fy -= p.y / d0 * k * 3; }
     for (const s of G.shards) { const dx = s.x - p.x, dy = s.y - p.y, d = Math.hypot(dx, dy) || 1; if (d < 260) { fx += dx / d * 0.25; fy += dy / d * 0.25; } }
+    // hunt: close in on the nearest target; get behind wardens instead of facing their shield
+    let hunt = null, hd = 1e9;
+    for (const t of G.enemies) { if (t.spawnT > 0) continue; const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < hd) { hd = d; hunt = t; } }
+    if (hunt && !b) {
+      let tx = hunt.x, ty = hunt.y;
+      if (hunt.type === 'warden') {
+        const side = Math.sin(L.angDiff(Math.atan2(p.y - hunt.y, p.x - hunt.x), hunt.face)) >= 0 ? 1 : -1;
+        const a = hunt.face + side * 2.2; tx += Math.cos(a) * 120; ty += Math.sin(a) * 120;
+      }
+      const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy) || 1;
+      if (hunt.type === 'warden' || hd > 190) { fx += dx / d * 1.6; fy += dy / d * 1.6; }
+    }
     const fl = Math.hypot(fx, fy);
     if (fl > 0.15) { inp.mx = fx / fl; inp.my = fy / fl; }
 
@@ -71,6 +83,7 @@
     return inp;
   }
   L.botInput = botInput;
+  L.frame = (now) => frame(now); // manual frame pump for automated tests
 
   // headless simulation for automated tests: n fixed frames, optionally driven by the autopilot
   L.step = function (n, dt, useBot) {
@@ -81,9 +94,11 @@
 
   // ---------- loop ----------
   let last = 0, scene, view;
+  // draw one frame on demand and report its cost in ms (used by automated tests when rAF is throttled)
+  L.renderNow = function () { const t = performance.now(); R.draw(); if (P.ok) P.render(scene, t / 1000); return performance.now() - t; };
   const perf = L.perf = { frames: 0, slow: 0, worst: 0, sum: 0 };
+  function loop(now) { requestAnimationFrame(loop); frame(now); }
   function frame(now) {
-    requestAnimationFrame(frame);
     const raw = (now - last) / 1000; last = now;
     const rdt = Math.min(0.05, Math.max(0.001, raw));
     R.fps = L.lerp(R.fps, 1 / rdt, 0.05);
@@ -115,7 +130,7 @@
     const q = new URLSearchParams(location.search);
     if (q.has('bot')) { L.useBot = true; G.autoPick = true; U.play(false); if (q.has('god')) G.god = true; }
     last = performance.now();
-    requestAnimationFrame(frame);
+    requestAnimationFrame(loop);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
