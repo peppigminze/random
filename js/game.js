@@ -611,7 +611,7 @@
     else if (G.phase === 'fight') {
       G.pulseT += dt;
       const n = G.enemies.length;
-      if (G.pending.length && (n <= 2 || G.pulseT > 11)) spawnPulse();
+      if (G.pending.length && (n <= 4 || G.pulseT > 7.5)) spawnPulse();
       else if (!G.pending.length && n === 0) G.waveCleared();
     } else if (G.phase === 'clear') {
       G.phaseT -= dt;

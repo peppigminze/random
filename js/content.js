@@ -27,7 +27,7 @@
     const types = Object.keys(L.ENEMY).filter(k => L.ENEMY[k].from <= w);
     let mut = null;
     if (w >= 3 && w % 10 !== 0 && rng.chance(w > 10 ? 0.6 : 0.4)) mut = rng.pick(L.MUTATORS);
-    let budget = (5 + w * 2.5) * (1 + (depth - 1) * 0.55);
+    let budget = (6 + w * 3.3) * (1 + (depth - 1) * 0.55);
     if (mut && mut.id === 'gilded') budget *= 1.3;
     const fresh = types.filter(k => L.ENEMY[k].from === w)[0]; // a newly unlocked type always gets a showcase wave
     const special = types.filter(k => k !== 'mote');
@@ -38,7 +38,7 @@
     for (let p = 0; p < nP; p++) {
       let b = budget * split[p];
       const list = [];
-      while (b > 0.4 && list.length < 22) {
+      while (b > 0.4 && list.length < 26) {
         let t = rng.chance(0.5) ? (rng.chance(0.6) ? feat : feat2) : rng.chance(0.6) ? 'mote' : rng.pick(types);
         if (L.ENEMY[t].cost > b + 0.6) t = 'mote';
         if (mut && mut.id === 'swarm' && t === 'mote') { list.push('mite', 'mite'); b -= 1; continue; }
@@ -49,6 +49,11 @@
       const nG = Math.min(list.length, rng.int(1, 3));
       for (let g = 0; g < nG; g++) groups.push({ form: rng.pick(forms), types: [], a: rng.range(0, L.TAU) });
       list.forEach((t, i) => groups[i % nG].types.push(t));
+      // fodder: every pulse also brings a formation of motes — lines and rings that beg to be cut in one dash
+      const fod = Math.min(9, 3 + Math.floor(w / 2)) + (mut && mut.id === 'swarm' ? 4 : 0);
+      const ft = mut && mut.id === 'swarm' ? 'mite' : 'mote', fg = { form: rng.pick(['line', 'ring', 'line', 'cluster']), types: [], a: rng.range(0, L.TAU) };
+      for (let i = 0; i < fod; i++) fg.types.push(ft);
+      groups.push(fg);
       pulses.push(groups);
     }
     return { pulses, mut };
