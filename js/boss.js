@@ -240,7 +240,7 @@
   const tf = (s, x, y) => s === 0 ? [-x, -y] : s === 1 ? [-x, y] : s === 2 ? [x, -y] : s === 3 ? [-y, x] : [y, -x];
   function spawnEcho() {
     const p = G.player;
-    const hp = 8 + (G.depth - 1) * 3;
+    const hp = 7 + (G.depth - 1) * 3;
     G.echo = {
       hp, maxHp: hp, x: -p.x, y: -p.y, sym: 0, decoy: -1, dx: 0, dy: 0, delay: 1.1, inv: 2.2, flash: 0, t: 0,
       dashing: false, shootT: 4, tele: 0, hist: [], bodies: [{}, {}], trail: [],
@@ -303,12 +303,12 @@
           G.scars.push({ ax: bd.sx, ay: bd.sy, bx: px, by: py, life: 1.5, max: 1.5, arm: 0.35 });
           F.slash(bd.sx, bd.sy, px, py, C.shadow, 12);
           if (i === 0 && solid) {
-            const n = low ? 8 : 6, o = L.r(0, TAU);
+            const n = low ? 7 : 5, o = L.r(0, TAU);
             for (let k = 0; k < n; k++) G.fireBullet(x, y, o + k * TAU / n, 150, { arm: 0.2, color: '#b592ff' });
             sfx().shot();
           }
         }
-        if (solid && !p.dead && !p.dashing && Math.hypot(p.x - x, p.y - y) < 22) G.hurtPlayer(x, y);
+        if (solid && !p.dead && !p.dashing && Math.hypot(p.x - x, p.y - y) < 18) G.hurtPlayer(x, y);
       }
     });
     e.skip = false;
