@@ -84,11 +84,17 @@
     c.globalAlpha = 1;
   }
 
+  const tints = {};
+  function tint(col) { // dark body with a hint of the outline colour
+    if (tints[col]) return tints[col];
+    const n = parseInt(col.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    return tints[col] = 'rgb(' + Math.round(14 + r * 0.24) + ',' + Math.round(8 + g * 0.24) + ',' + Math.round(22 + b * 0.24) + ')';
+  }
   function drawEnemy(e) {
     const hc = L.set().contrast;
     c.save(); c.translate(e.x, e.y);
     const fl = e.flash > 0.01;
-    c.fillStyle = fl ? '#fff' : hc ? e.color : '#160b22';
+    c.fillStyle = fl ? '#fff' : hc ? e.color : tint(e.color);
     c.strokeStyle = fl ? '#fff' : hc ? '#fff' : e.color; c.lineWidth = hc ? 3.5 : 3; c.lineJoin = 'round';
     const r = e.r;
     switch (e.type) {

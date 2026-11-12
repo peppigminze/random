@@ -312,5 +312,5 @@
     },
   };
   // make every sfx a safe no-op until audio is unlocked
-  for (const k in S) { const fn = S[k]; S[k] = function () { if (A.ready) try { fn.apply(null, arguments); } catch (e) { /* never break the game for a sound */ } }; }
+  for (const k in S) { const fn = S[k]; S[k] = function () { if (A.ready) try { fn.apply(null, arguments); } catch (e) { if (L.debug) throw e; /* never break the game for a sound */ } }; }
 })();
