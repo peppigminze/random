@@ -9,6 +9,8 @@ Kein Build, keine Abhängigkeiten, keine Assets: Grafik, Musik und Soundeffekte 
 
 ## Starten
 
+**Online spielen:** <https://peppigminze.github.io/random/> (GitHub Pages, direkt aus diesem Branch).
+
 **Variante 1:** `index.html` im Browser öffnen (Doppelklick). Fertig.
 
 **Variante 2** (lokaler Server, ein Befehl):
